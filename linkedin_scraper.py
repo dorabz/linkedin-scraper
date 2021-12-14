@@ -125,65 +125,36 @@ print(joining_date + ", " + employment_duration)
 ############################################ company info #####################################################################
 
 
-url=['https://www.linkedin.com/company/meta/']
+url=['https://www.linkedin.com/company/meta/about/']
 
 driver.get(url)
     for i in range(max(0,10)): # here you will need to tune to see exactly how many scrolls you need
         driver.execute_script('window.scrollBy(0, 500)')
         sleep(3)
 	
-src = driver.page_source
-soup = BeautifulSoup(r,’html.parser’)
 
-u=list()
-l={}
+data={
+    "overview": [],
+    "website": [],
+    "company_size": [],
+    "headquarters": [],
+    #"locations":[]
+}
 
-try:
- l[“Company”]=soup.find(“h1”,{“class”:”org-top-card-summary__title t-24 t-black truncate”}).text.replace(“\n”,””)
-except:
- l[“Company”]=None
-allProp = soup.find_all(“dd”,{“class”:”org-page-details__definition-text t-14 t-black — light t-normal”})
-try:
- l[“website”]=allProp[0].text.replace(“\n”,””)
-except:
- l[“website”]=None
-try:
- l[“Industry”]=allProp[1].text.replace(“\n”,””)
-except:
- l[“Industry”]=None
-try:
- l[“Company Size”]=soup.find(“dd”,{“class”:”org-about-company-module__company-size-definition-text t-14 t-black — light mb1 fl”}).text.replace(“\n”,””)
-except:
- l[“Company Size”]=None
-try:
- l[“Address”]=allProp[2].text.replace(“\n”,””)
-except:
- l[“Address”]=None
-try:
- l[“Type”]=allProp[3].text.replace(“\n”,””)
-except:
- l[“Type”]=None
-try:
- l[“Specialties”]=allProp[4].text.replace(“\n”,””)
-except:
- l[“Specialties”]=None
-u.append(l)
 
-df = pd.io.json.json_normalize(u)
-print(df)
+src=driver.page_source
+soup=BeautifulSoup(src, 'html.parser')
+
+overview = driver.find_elements_by_xpath('//div[@class="ember-view"]')
+  
+
+
+        overview = soup.find('div',{'class':'break-words white-space-pre-wrap mb5 text-body-small t-black--light'}).get_text().strip()
+   	website = soup.find('div',{'class':'link-without-visited-state ember-view'}).get_text().strip()
+	company_size = soup.find('div',{'class':'text-body-small t-black--light mb1'}).get_text().strip()
+
+	headquarters = soup.find('div',{'class':'mb4 text-body-small t-black--light'}).get_text().strip()
+	
+print(overview)
+
 driver.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
