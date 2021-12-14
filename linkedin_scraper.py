@@ -122,7 +122,56 @@ employment_duration = a_tags.find_all("h4")[1].find_all(
 
 print(joining_date + ", " + employment_duration)
 
+############################################ company info #####################################################################
 
+
+url=['https://www.linkedin.com/company/meta/']
+
+driver.get(url)
+    for i in range(max(0,10)): # here you will need to tune to see exactly how many scrolls you need
+        driver.execute_script('window.scrollBy(0, 500)')
+        sleep(3)
+	
+src = driver.page_source
+soup = BeautifulSoup(r,’html.parser’)
+
+u=list()
+l={}
+
+try:
+ l[“Company”]=soup.find(“h1”,{“class”:”org-top-card-summary__title t-24 t-black truncate”}).text.replace(“\n”,””)
+except:
+ l[“Company”]=None
+allProp = soup.find_all(“dd”,{“class”:”org-page-details__definition-text t-14 t-black — light t-normal”})
+try:
+ l[“website”]=allProp[0].text.replace(“\n”,””)
+except:
+ l[“website”]=None
+try:
+ l[“Industry”]=allProp[1].text.replace(“\n”,””)
+except:
+ l[“Industry”]=None
+try:
+ l[“Company Size”]=soup.find(“dd”,{“class”:”org-about-company-module__company-size-definition-text t-14 t-black — light mb1 fl”}).text.replace(“\n”,””)
+except:
+ l[“Company Size”]=None
+try:
+ l[“Address”]=allProp[2].text.replace(“\n”,””)
+except:
+ l[“Address”]=None
+try:
+ l[“Type”]=allProp[3].text.replace(“\n”,””)
+except:
+ l[“Type”]=None
+try:
+ l[“Specialties”]=allProp[4].text.replace(“\n”,””)
+except:
+ l[“Specialties”]=None
+u.append(l)
+
+df = pd.io.json.json_normalize(u)
+print(df)
+driver.close()
 
 
 
